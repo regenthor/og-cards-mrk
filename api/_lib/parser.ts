@@ -1,11 +1,15 @@
 import { IncomingMessage } from 'http';
 import { parse } from 'url';
 import { ParsedRequest, Theme } from './types';
+import { readFileSync } from 'fs';
+
+const logo = readFileSync(`${__dirname}/../_assets/logo.svg`).toString('base64');
+
 
 export function parseRequest(req: IncomingMessage) {
     console.log('HTTP ' + req.url);
     const { pathname, query } = parse(req.url || '/', true);
-    const { fontSize, images, widths, heights, theme, md } = (query || {});
+    const { footerURL, fontSize, images, widths, heights, theme, md, tvl, percentChange } = (query || {});
 
     if (Array.isArray(fontSize)) {
         throw new Error('Expected a single fontSize');
@@ -26,9 +30,16 @@ export function parseRequest(req: IncomingMessage) {
         text = arr.join('.');
     }
 
+    let url = getString(footerURL);
+    let totalValue = getString(tvl);
+    let percentageChange = getString(percentChange)
+    
     const parsedRequest: ParsedRequest = {
         fileType: extension === 'jpeg' ? extension : 'png',
         text: decodeURIComponent(text),
+        tvl: totalValue,
+        percentChange: percentageChange,
+        footerURL: decodeURIComponent(url),
         theme: theme === 'dark' ? 'dark' : 'light',
         md: md === '1' || md === 'true',
         fontSize: fontSize || '96px',
@@ -50,16 +61,31 @@ function getArray(stringOrArray: string[] | string | undefined): string[] {
     }
 }
 
+function getString(stringOrArray: string[] | string | undefined) {
+    if (stringOrArray && Array.isArray(stringOrArray)) {
+        if (stringOrArray.length === 0) {
+            return ''
+        } else {
+            return stringOrArray[0]
+        }
+    } else {
+        return stringOrArray ?? ''
+    }
+}
+
 function getDefaultImages(images: string[], theme: Theme): string[] {
     const defaultImage = theme === 'light'
-        ? 'https://assets.vercel.com/image/upload/front/assets/design/vercel-triangle-black.svg'
-        : 'https://assets.vercel.com/image/upload/front/assets/design/vercel-triangle-white.svg';
+        ? logo
+        : logo;
 
     if (!images || !images[0]) {
         return [defaultImage];
     }
-    if (!images[0].startsWith('https://assets.vercel.com/') && !images[0].startsWith('https://assets.zeit.co/')) {
-        images[0] = defaultImage;
-    }
+
+    // if (!images[0].startsWith('https://assets.vercel.com/') && !images[0].startsWith('https://assets.zeit.co/')) {
+    //     images[0] = defaultImage;
+    // }
+
     return images;
 }
+

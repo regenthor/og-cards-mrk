@@ -130,11 +130,11 @@ const fileTypeOptions: DropdownOption[] = [
     { text: 'JPEG', value: 'jpeg' },
 ];
 
-const fontSizeOptions: DropdownOption[] = Array
-    .from({ length: 10 })
-    .map((_, i) => i * 25)
-    .filter(n => n > 0)
-    .map(n => ({ text: n + 'px', value: n + 'px' }));
+// const fontSizeOptions: DropdownOption[] = Array
+//     .from({ length: 10 })
+//     .map((_, i) => i * 25)
+//     .filter(n => n > 0)
+//     .map(n => ({ text: n + 'px', value: n + 'px' }));
 
 const markdownOptions: DropdownOption[] = [
     { text: 'Plain Text', value: '0' },
@@ -142,28 +142,27 @@ const markdownOptions: DropdownOption[] = [
 ];
 
 const imageLightOptions: DropdownOption[] = [
-    { text: 'Vercel', value: 'https://assets.vercel.com/image/upload/front/assets/design/vercel-triangle-black.svg' },
-    { text: 'Next.js', value: 'https://assets.vercel.com/image/upload/front/assets/design/nextjs-black-logo.svg' },
-    { text: 'Hyper', value: 'https://assets.vercel.com/image/upload/front/assets/design/hyper-color-logo.svg' },
+    { text: 'DefiLlama', value: 'https://raw.githubusercontent.com/DefiLlama/defillama-app/main/src/assets/logo_white_long.svg' },
+    { text: 'DefiLlamaNFT', value: 'https://raw.githubusercontent.com/DefiLlama/defillama-app/main/src/assets/nft_logo_white_long.svg' },
 ];
 
 const imageDarkOptions: DropdownOption[] = [
-
-    { text: 'Vercel', value: 'https://assets.vercel.com/image/upload/front/assets/design/vercel-triangle-white.svg' },
-    { text: 'Next.js', value: 'https://assets.vercel.com/image/upload/front/assets/design/nextjs-white-logo.svg' },
-    { text: 'Hyper', value: 'https://assets.vercel.com/image/upload/front/assets/design/hyper-bw-logo.svg' },
+    { text: 'DefiLlama', value: 'https://raw.githubusercontent.com/DefiLlama/defillama-app/main/src/assets/logo_white_long.svg' },
+    { text: 'DefiLlamaNFT', value: 'https://raw.githubusercontent.com/DefiLlama/defillama-app/main/src/assets/nft_logo_white_long.svg' },
 ];
 
-const widthOptions = [
-    { text: 'width', value: 'auto' },
-    { text: '50', value: '50' },
-    { text: '100', value: '100' },
-    { text: '150', value: '150' },
-    { text: '200', value: '200' },
-    { text: '250', value: '250' },
-    { text: '300', value: '300' },
-    { text: '350', value: '350' },
-];
+const protocolImage = "https://raw.githubusercontent.com/DefiLlama/defillama-app/main/public/icons/curve.jpg"
+
+// const widthOptions = [
+//     { text: 'width', value: 'auto' },
+//     { text: '50', value: '50' },
+//     { text: '100', value: '100' },
+//     { text: '150', value: '150' },
+//     { text: '200', value: '200' },
+//     { text: '250', value: '250' },
+//     { text: '300', value: '300' },
+//     { text: '350', value: '350' },
+// ];
 
 const heightOptions = [
     { text: 'height', value: 'auto' },
@@ -181,8 +180,6 @@ interface AppState extends ParsedRequest {
     showToast: boolean;
     messageToast: string;
     selectedImageIndex: number;
-    widths: string[];
-    heights: string[];
     overrideUrl: URL | null;
 }
 
@@ -204,9 +201,12 @@ const App = (_: any, state: AppState, setState: SetState) => {
         fileType = 'png',
         fontSize = '100px',
         theme = 'light',
-        md = true,
-        text = '**Hello** World',
-        images=[imageLightOptions[0].value],
+        md = false,
+        text = 'Curve Finance',
+        tvl = '$100B',
+        percentChange = "-2%",
+        footerURL = "https://defillama.com/protocol/curve",
+        images=[imageLightOptions[0].value, protocolImage],
         widths=[],
         heights=[],
         showToast = false,
@@ -215,6 +215,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
         selectedImageIndex = 0,
         overrideUrl = null,
     } = state;
+    
     const mdValue = md ? '1' : '0';
     const imageOptions = theme === 'light' ? imageLightOptions : imageDarkOptions;
     const url = new URL(window.location.origin);
@@ -222,6 +223,9 @@ const App = (_: any, state: AppState, setState: SetState) => {
     url.searchParams.append('theme', theme);
     url.searchParams.append('md', mdValue);
     url.searchParams.append('fontSize', fontSize);
+    url.searchParams.append('tvl', tvl);
+    url.searchParams.append('percentChange', percentChange);
+    url.searchParams.append("footerURL", encodeURIComponent(footerURL));
     for (let image of images) {
         url.searchParams.append('images', image);
     }
@@ -231,6 +235,17 @@ const App = (_: any, state: AppState, setState: SetState) => {
     for (let height of heights) {
         url.searchParams.append('heights', height);
     }
+
+    const showAddImageBtn = images.length === 1 ? ( H(Field, {
+        label: `Image`,
+        input: H(Button, {
+            label: `Add Image`,
+            onclick: () => {
+                const nextImage = 'https://raw.githubusercontent.com/DefiLlama/defillama-app/main/public/icons/curve.jpg'
+                setLoadingState({ images: [...images, nextImage] })
+            }
+        }),
+    })) : H('div');
 
     return H('div',
         { className: 'split' },
@@ -259,33 +274,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
                     })
                 }),
                 H(Field, {
-                    label: 'Font Size',
-                    input: H(Dropdown, {
-                        options: fontSizeOptions,
-                        value: fontSize,
-                        onchange: (val: string) => setLoadingState({ fontSize: val })
-                    })
-                }),
-                H(Field, {
-                    label: 'Text Type',
-                    input: H(Dropdown, {
-                        options: markdownOptions,
-                        value: mdValue,
-                        onchange: (val: string) => setLoadingState({ md: val === '1' })
-                    })
-                }),
-                H(Field, {
-                    label: 'Text Input',
-                    input: H(TextInput, {
-                        value: text,
-                        oninput: (val: string) => {
-                            console.log('oninput ' + val);
-                            setLoadingState({ text: val, overrideUrl: url });
-                        }
-                    })
-                }),
-                H(Field, {
-                    label: 'Image 1',
+                    label: 'Logo',
                     input: H('div',
                         H(Dropdown, {
                             options: imageOptions,
@@ -299,16 +288,16 @@ const App = (_: any, state: AppState, setState: SetState) => {
                         }),
                         H('div',
                             { className: 'field-flex' },
-                            H(Dropdown, {
-                                options: widthOptions,
-                                value: widths[0],
-                                small: true,
-                                onchange: (val: string) =>  {
-                                    let clone = [...widths];
-                                    clone[0] = val;
-                                    setLoadingState({ widths: clone });
-                                }
-                            }),
+                            // H(Dropdown, {
+                            //     options: widthOptions,
+                            //     value: widths[0],
+                            //     small: true,
+                            //     onchange: (val: string) =>  {
+                            //         let clone = [...widths];
+                            //         clone[0] = val;
+                            //         setLoadingState({ widths: clone });
+                            //     }
+                            // }),
                             H(Dropdown, {
                                 options: heightOptions,
                                 value: heights[0],
@@ -322,8 +311,61 @@ const App = (_: any, state: AppState, setState: SetState) => {
                         )
                     ),
                 }),
+                // H(Field, {
+                //     label: 'Font Size',
+                //     input: H(Dropdown, {
+                //         options: fontSizeOptions,
+                //         value: fontSize,
+                //         onchange: (val: string) => setLoadingState({ fontSize: val })
+                //     })
+                // }),
+                H(Field, {
+                    label: 'Text Type',
+                    input: H(Dropdown, {
+                        options: markdownOptions,
+                        value: mdValue,
+                        onchange: (val: string) => setLoadingState({ md: val === '1' })
+                    })
+                }),
+                H(Field, {
+                    label: 'Name',
+                    input: H(TextInput, {
+                        value: text,
+                        oninput: (val: string) => {
+                            setLoadingState({ text: val, overrideUrl: url });
+                        }
+                    })
+                }),
+                H(Field, {
+                    label: 'TVL',
+                    input: H(TextInput, {
+                        value: tvl,
+                        oninput: (val: string) => {
+                            setLoadingState({ tvl: val, overrideUrl: url });
+                        }
+                    })
+                }),
+                H(Field, {
+                    label: 'Percent Change',
+                    input: H(TextInput, {
+                        value: percentChange,
+                        oninput: (val: string) => {
+                            setLoadingState({ percentChange: val, overrideUrl: url });
+                        }
+                    })
+                }),
+                H(Field, {
+                    label: 'Footer URL',
+                    input: H(TextInput, {
+                        value: footerURL,
+                        oninput: (val: string) => {
+                            console.log('onurlinput ' + val);
+                            setLoadingState({ footerURL: val, overrideUrl: url });
+                        }
+                    })
+                }),
                 ...images.slice(1).map((image, i) => H(Field, {
-                    label: `Image ${i + 2}`,
+                    label: `Image`,
                     input: H('div',
                         H(TextInput, {
                             value: image,
@@ -335,16 +377,16 @@ const App = (_: any, state: AppState, setState: SetState) => {
                         }),
                         H('div',
                             { className: 'field-flex' },
-                            H(Dropdown, {
-                                options: widthOptions,
-                                value: widths[i + 1],
-                                small: true,
-                                onchange: (val: string) =>  {
-                                    let clone = [...widths];
-                                    clone[i + 1] = val;
-                                    setLoadingState({ widths: clone });
-                                }
-                            }),
+                            // H(Dropdown, {
+                            //     options: widthOptions,
+                            //     value: widths[i + 1],
+                            //     small: true,
+                            //     onchange: (val: string) =>  {
+                            //         let clone = [...widths];
+                            //         clone[i + 1] = val;
+                            //         setLoadingState({ widths: clone });
+                            //     }
+                            // }),
                             H(Dropdown, {
                                 options: heightOptions,
                                 value: heights[i + 1],
@@ -359,7 +401,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
                         H('div',
                             { className: 'field-flex' },
                             H(Button, {
-                                label: `Remove Image ${i + 2}`,
+                                label: `Remove Image`,
                                 onclick: (e: MouseEvent) => {
                                     e.preventDefault();
                                     const filter = (arr: any[]) => [...arr].filter((_, n) => n !== i + 1);
@@ -372,18 +414,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
                         )
                     )
                 })),
-                H(Field, {
-                    label: `Image ${images.length + 1}`,
-                    input: H(Button, {
-                        label: `Add Image ${images.length + 1}`,
-                        onclick: () => {
-                            const nextImage = images.length === 1
-                                ? 'https://cdn.jsdelivr.net/gh/remojansen/logo.ts@master/ts.svg'
-                                : '';
-                            setLoadingState({ images: [...images, nextImage] })
-                        }
-                    }),
-                }),
+                showAddImageBtn
             )
         ),
         H('div',
