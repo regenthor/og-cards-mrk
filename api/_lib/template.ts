@@ -91,7 +91,7 @@ function getCss(theme: string, fontSize: string, renderOnlyLogo: boolean, tvlExi
 
     .header .details .name {
         font-weight: 600;
-        font-size: 82px;
+        font-size: 80px;
         line-height: 99px;
         white-space: nowrap;
         overflow: hidden;
@@ -110,10 +110,12 @@ function getCss(theme: string, fontSize: string, renderOnlyLogo: boolean, tvlExi
     }
 
     .main {
-        padding: 78px;
+        padding: 76px;
+        padding-bottom: 40px;
         background: ${theme === "dark" ? "#1C1F2E" : "rgba(230, 232, 248, 0.6)"};
         margin: auto 0;
         width: fit-content;
+        min-width: 70%;
         border-radius: 40px;
         display: ${!tvlExists || renderOnlyLogo ? "none" : "revert"};
         white-space: nowrap;
@@ -123,20 +125,20 @@ function getCss(theme: string, fontSize: string, renderOnlyLogo: boolean, tvlExi
 
     .main .title {
         font-weight: 500;
-        font-size: 58px;
+        font-size: 56px;
         line-height: 70px;
         color: ${theme === "dark" ? "#777B92" : "#8C90B0"};
     }
 
     .main .details {
-        margin-top: 45px;
+        margin-top: 44px;
         display: flex;
         align-items: baseline;
     }
 
     .main .details .value {
         font-weight: 600;
-        font-size: 198px;
+        font-size: 196px;
         line-height: 240px;
         color: ${theme === "dark" ? "#FFFFFF" : "#213295"};
         margin-right: 70px;
@@ -144,9 +146,17 @@ function getCss(theme: string, fontSize: string, renderOnlyLogo: boolean, tvlExi
 
     .main .details .change {
         font-weight: 600;
-        font-size: 83px;
+        font-size: 84px;
         line-height: 100px;
         color: ${isChangePositive ? "#4BA433" : "#FF3F28"};
+    }
+
+    .change svg {
+        height: 84px;
+        width: 84px;
+        position: relative;
+        top: 14px;
+        right: -16px;
     }
     
     .footer {
@@ -155,7 +165,7 @@ function getCss(theme: string, fontSize: string, renderOnlyLogo: boolean, tvlExi
         font-size: 44px;
         line-height: 72px;
         color: ${theme === "dark" ? "rgba(149, 153, 171, 0.9)" : "#575A68"};
-        margin-bottom: -12px;
+        margin-bottom: -16px;
     }
     
     .spacer {
@@ -176,6 +186,18 @@ export function getHtml(parsedReq: ParsedRequest) {
     const renderOnlyLogo =  !text && images.length === 1;
     const tvlExists = tvl ? true : false;
     const isChangePositive = percentChange?.includes("+") ?? false;
+    const isChangeNegative = percentChange?.includes("-") ?? false;
+
+    let trend;
+
+    if (isChangePositive) {
+        trend = percentChange.split("+")[1]
+    } else if (isChangeNegative) {
+        trend = percentChange.split("-")[1]
+    } else {
+        trend = percentChange || ""
+    }
+
     return `<!DOCTYPE html>
             <html>
                 <meta charset="utf-8">
@@ -198,7 +220,12 @@ export function getHtml(parsedReq: ParsedRequest) {
                         <div class="title">Total Value Locked</div>
                         <div class="details">
                             <div class="value">${sanitizeHtml(tvl)}</div>
-                            <div class="change">${sanitizeHtml(percentChange)}</div>
+                            <div class="change">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d=${isChangePositive ? `"M7 11l5-5m0 0l5 5m-5-5v12"` : `"M17 13l-5 5m0 0l-5-5m5 5V6"`} />
+                                </svg>
+                                ${sanitizeHtml(trend)}
+                            </div>
                         </div>
                     </div>
                     <div class="footer">
