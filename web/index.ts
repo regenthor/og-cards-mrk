@@ -130,39 +130,22 @@ const fileTypeOptions: DropdownOption[] = [
     { text: 'JPEG', value: 'jpeg' },
 ];
 
-// const fontSizeOptions: DropdownOption[] = Array
-//     .from({ length: 10 })
-//     .map((_, i) => i * 25)
-//     .filter(n => n > 0)
-//     .map(n => ({ text: n + 'px', value: n + 'px' }));
-
 const markdownOptions: DropdownOption[] = [
     { text: 'Plain Text', value: '0' },
     { text: 'Markdown', value: '1' },
 ];
 
 const imageLightOptions: DropdownOption[] = [
-    { text: 'DefiLlama', value: 'https://raw.githubusercontent.com/DefiLlama/defillama-app/main/src/assets/logo_white_long.svg' },
-    { text: 'DefiLlamaNFT', value: 'https://raw.githubusercontent.com/DefiLlama/defillama-app/main/src/assets/nft_logo_white_long.svg' },
+    { text: 'DefiLlama', value: 'https://raw.githubusercontent.com/DefiLlama/defillama-press-kit/master/SVG/defillama-dark.svg' },
+    { text: 'DefiLlamaNFT', value: 'https://raw.githubusercontent.com/DefiLlama/defillama-press-kit/master/SVG/defillama-nft-dark.svg' },
 ];
 
 const imageDarkOptions: DropdownOption[] = [
-    { text: 'DefiLlama', value: 'https://raw.githubusercontent.com/DefiLlama/defillama-app/main/src/assets/logo_white_long.svg' },
-    { text: 'DefiLlamaNFT', value: 'https://raw.githubusercontent.com/DefiLlama/defillama-app/main/src/assets/nft_logo_white_long.svg' },
+    { text: 'DefiLlama', value: 'https://raw.githubusercontent.com/DefiLlama/defillama-press-kit/master/SVG/defillama.svg' },
+    { text: 'DefiLlamaNFT', value: 'https://raw.githubusercontent.com/DefiLlama/defillama-press-kit/master/SVG/defillama-nft.svg' },
 ];
 
 const protocolImage = "https://raw.githubusercontent.com/DefiLlama/defillama-app/main/public/icons/curve.jpg"
-
-// const widthOptions = [
-//     { text: 'width', value: 'auto' },
-//     { text: '50', value: '50' },
-//     { text: '100', value: '100' },
-//     { text: '150', value: '150' },
-//     { text: '200', value: '200' },
-//     { text: '250', value: '250' },
-//     { text: '300', value: '300' },
-//     { text: '350', value: '350' },
-// ];
 
 const heightOptions = [
     { text: 'height', value: 'auto' },
@@ -288,16 +271,6 @@ const App = (_: any, state: AppState, setState: SetState) => {
                         }),
                         H('div',
                             { className: 'field-flex' },
-                            // H(Dropdown, {
-                            //     options: widthOptions,
-                            //     value: widths[0],
-                            //     small: true,
-                            //     onchange: (val: string) =>  {
-                            //         let clone = [...widths];
-                            //         clone[0] = val;
-                            //         setLoadingState({ widths: clone });
-                            //     }
-                            // }),
                             H(Dropdown, {
                                 options: heightOptions,
                                 value: heights[0],
@@ -311,14 +284,6 @@ const App = (_: any, state: AppState, setState: SetState) => {
                         )
                     ),
                 }),
-                // H(Field, {
-                //     label: 'Font Size',
-                //     input: H(Dropdown, {
-                //         options: fontSizeOptions,
-                //         value: fontSize,
-                //         onchange: (val: string) => setLoadingState({ fontSize: val })
-                //     })
-                // }),
                 H(Field, {
                     label: 'Text Type',
                     input: H(Dropdown, {
@@ -377,16 +342,6 @@ const App = (_: any, state: AppState, setState: SetState) => {
                         }),
                         H('div',
                             { className: 'field-flex' },
-                            // H(Dropdown, {
-                            //     options: widthOptions,
-                            //     value: widths[i + 1],
-                            //     small: true,
-                            //     onchange: (val: string) =>  {
-                            //         let clone = [...widths];
-                            //         clone[i + 1] = val;
-                            //         setLoadingState({ widths: clone });
-                            //     }
-                            // }),
                             H(Dropdown, {
                                 options: heightOptions,
                                 value: heights[i + 1],

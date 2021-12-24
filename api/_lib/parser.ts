@@ -1,10 +1,6 @@
 import { IncomingMessage } from 'http';
 import { parse } from 'url';
 import { ParsedRequest, Theme } from './types';
-import { readFileSync } from 'fs';
-
-const logo = readFileSync(`${__dirname}/../_assets/logo.svg`).toString('base64');
-
 
 export function parseRequest(req: IncomingMessage) {
     console.log('HTTP ' + req.url);
@@ -75,16 +71,12 @@ function getString(stringOrArray: string[] | string | undefined) {
 
 function getDefaultImages(images: string[], theme: Theme): string[] {
     const defaultImage = theme === 'light'
-        ? logo
-        : logo;
+        ? "https://raw.githubusercontent.com/DefiLlama/defillama-press-kit/master/SVG/defillama.svg"
+        : "https://raw.githubusercontent.com/DefiLlama/defillama-press-kit/master/SVG/defillama-dark.svg";
 
     if (!images || !images[0]) {
         return [defaultImage];
     }
-
-    // if (!images[0].startsWith('https://assets.vercel.com/') && !images[0].startsWith('https://assets.zeit.co/')) {
-    //     images[0] = defaultImage;
-    // }
 
     return images;
 }
