@@ -200,12 +200,13 @@ const App = (_: any, state: AppState, setState: SetState) => {
     const mdValue = md ? '1' : '0';
     const imageOptions = theme === 'light' ? imageLightOptions : imageDarkOptions;
     const url = new URL(window.location.origin);
-    url.pathname = `${encodeURIComponent(text)}.${fileType}`;
-    url.searchParams.append('theme', theme);
-    url.searchParams.append('md', mdValue);
-    url.searchParams.append('tvl', tvl);
-    url.searchParams.append('percentChange', percentChange);
-    url.searchParams.append("footerURL", encodeURIComponent(footerURL));
+    url.pathname = `${text ? encodeURIComponent(text) : "default"}.${fileType}`;
+    theme && url.searchParams.append('theme', theme);
+    mdValue && url.searchParams.append('md', mdValue);
+    tvl && url.searchParams.append('tvl', tvl);
+    percentChange && url.searchParams.append('percentChange', percentChange);
+    footerURL && url.searchParams.append("footerURL", encodeURIComponent(footerURL));
+
     for (let image of images) {
         url.searchParams.append('images', image);
     }

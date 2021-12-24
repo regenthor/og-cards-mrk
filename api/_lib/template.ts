@@ -140,7 +140,7 @@ function getCss(theme: string, renderOnlyLogo: boolean, tvlExists: boolean, isCh
         font-size: 196px;
         line-height: 240px;
         color: ${theme === "dark" ? "#FFFFFF" : "#213295"};
-        margin-right: 70px;
+        margin-right: 40px;
     }
 
     .main .details .change {
@@ -182,7 +182,8 @@ function getCss(theme: string, renderOnlyLogo: boolean, tvlExists: boolean, isCh
 export function getHtml(parsedReq: ParsedRequest) {
     const { text, tvl, percentChange, footerURL, theme, md, images, heights } = parsedReq;
     // render only logo, if there is no text, and if there is no additional image selected
-    const renderOnlyLogo =  !text && images.length === 1;
+    const isDefault = !text || text === "default";
+    const renderOnlyLogo =  isDefault && images.length <= 1;
     const tvlExists = tvl ? true : false;
     const isChangePositive = percentChange?.includes("+") ?? false;
     const isChangeNegative = percentChange?.includes("-") ?? false;
@@ -194,7 +195,7 @@ export function getHtml(parsedReq: ParsedRequest) {
     } else if (isChangeNegative) {
         trend = percentChange.split("-")[1]
     } else {
-        trend = percentChange || ""
+        trend = percentChange || '';
     }
 
     return `<!DOCTYPE html>
@@ -209,11 +210,11 @@ export function getHtml(parsedReq: ParsedRequest) {
                     <div class="header">
                         <div class="details">
                             ${images[1] ? getImage(images[1], heights[1], "tokenLogo") : ""}
-                            <div class="name">${emojify(
+                            <div class="name">${!isDefault ? emojify(
                                 md ? marked(text) : sanitizeHtml(text)
-                            )}</div>
+                            ) : ''}</div>
                         </div>
-                        ${getImage(images[0], heights[0], "logo")}
+                        ${getImage(images[0], isDefault ? "250" : heights[0], "logo")}
                     </div>
                     <div class="main">
                         <div class="title">Total Value Locked</div>
@@ -221,7 +222,7 @@ export function getHtml(parsedReq: ParsedRequest) {
                             <div class="value">${sanitizeHtml(tvl)}</div>
                             <div class="change">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d=${isChangePositive ? `"M7 11l5-5m0 0l5 5m-5-5v12"` : `"M17 13l-5 5m0 0l-5-5m5 5V6"`} />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d=${isChangePositive ? `"M7 11l5-5m0 0l5 5m-5-5v12"` : isChangeNegative ? `"M17 13l-5 5m0 0l-5-5m5 5V6"` : ''} />
                                 </svg>
                                 ${sanitizeHtml(trend)}
                             </div>
