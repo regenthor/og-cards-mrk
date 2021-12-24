@@ -11,7 +11,7 @@ const rglr = readFileSync(`${__dirname}/../_fonts/Inter-Regular.woff2`).toString
 const bold = readFileSync(`${__dirname}/../_fonts/Inter-Bold.woff2`).toString('base64');
 const mono = readFileSync(`${__dirname}/../_fonts/Vera-Mono.woff2`).toString('base64');
 
-function getCss(theme: string, fontSize: string, renderOnlyLogo: boolean, tvlExists: boolean, isChangePositive: boolean) {
+function getCss(theme: string, renderOnlyLogo: boolean, tvlExists: boolean, isChangePositive: boolean) {
     let background = 'white';
     let foreground = 'black';
 
@@ -83,7 +83,6 @@ function getCss(theme: string, fontSize: string, renderOnlyLogo: boolean, tvlExi
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: ${sanitizeHtml(fontSize)};
         color: ${foreground};
         line-height: 1.8;
         overflow: hidden;
@@ -181,7 +180,7 @@ function getCss(theme: string, fontSize: string, renderOnlyLogo: boolean, tvlExi
 }
 
 export function getHtml(parsedReq: ParsedRequest) {
-    const { text, tvl, percentChange, footerURL, theme, md, fontSize, images, widths, heights } = parsedReq;
+    const { text, tvl, percentChange, footerURL, theme, md, images, heights } = parsedReq;
     // render only logo, if there is no text, and if there is no additional image selected
     const renderOnlyLogo =  !text && images.length === 1;
     const tvlExists = tvl ? true : false;
@@ -204,17 +203,17 @@ export function getHtml(parsedReq: ParsedRequest) {
                 <title>Generated Image</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1">
                 <style>
-                    ${getCss(theme, fontSize, renderOnlyLogo, tvlExists, isChangePositive)}
+                    ${getCss(theme, renderOnlyLogo, tvlExists, isChangePositive)}
                 </style>
                 <body>
                     <div class="header">
                         <div class="details">
-                            ${images[1] ? getImage(images[1], widths[1], heights[1], "tokenLogo") : ""}
+                            ${images[1] ? getImage(images[1], heights[1], "tokenLogo") : ""}
                             <div class="name">${emojify(
                                 md ? marked(text) : sanitizeHtml(text)
                             )}</div>
                         </div>
-                        ${getImage(images[0], widths[0], heights[0], "logo")}
+                        ${getImage(images[0], heights[0], "logo")}
                     </div>
                     <div class="main">
                         <div class="title">Total Value Locked</div>

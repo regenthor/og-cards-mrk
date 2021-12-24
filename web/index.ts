@@ -182,7 +182,6 @@ const App = (_: any, state: AppState, setState: SetState) => {
     };
     const {
         fileType = 'png',
-        fontSize = '100px',
         theme = 'light',
         md = false,
         text = 'Curve Finance',
@@ -190,7 +189,6 @@ const App = (_: any, state: AppState, setState: SetState) => {
         percentChange = "-2%",
         footerURL = "https://defillama.com/protocol/curve",
         images=[imageLightOptions[0].value, protocolImage],
-        widths=[],
         heights=[],
         showToast = false,
         messageToast = '',
@@ -205,15 +203,11 @@ const App = (_: any, state: AppState, setState: SetState) => {
     url.pathname = `${encodeURIComponent(text)}.${fileType}`;
     url.searchParams.append('theme', theme);
     url.searchParams.append('md', mdValue);
-    url.searchParams.append('fontSize', fontSize);
     url.searchParams.append('tvl', tvl);
     url.searchParams.append('percentChange', percentChange);
     url.searchParams.append("footerURL", encodeURIComponent(footerURL));
     for (let image of images) {
         url.searchParams.append('images', image);
-    }
-    for (let width of widths) {
-        url.searchParams.append('widths', width);
     }
     for (let height of heights) {
         url.searchParams.append('heights', height);
@@ -361,9 +355,8 @@ const App = (_: any, state: AppState, setState: SetState) => {
                                     e.preventDefault();
                                     const filter = (arr: any[]) => [...arr].filter((_, n) => n !== i + 1);
                                     const imagesClone = filter(images);
-                                    const widthsClone = filter(widths);
                                     const heightsClone = filter(heights);
-                                    setLoadingState({ images: imagesClone, widths: widthsClone, heights: heightsClone });
+                                    setLoadingState({ images: imagesClone, heights: heightsClone });
                                 }
                             })
                         )
