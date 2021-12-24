@@ -237,11 +237,11 @@ export function getHtml(parsedReq: ParsedRequest) {
             </html>`;
     }
 
-function getImage(src: string, width ='auto', height = '150', className = 'logo') {
+function getImage(src: string, height = '150', className = 'logo') {
     return `<img
         class="${sanitizeHtml(className)}"
         src="${sanitizeHtml(src)}"
-        width="${sanitizeHtml(width)}"
+        width="auto"
         height="${sanitizeHtml(height)}"
         onerror="this.onerror=null; this.remove();"
     />`
