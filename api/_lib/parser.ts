@@ -5,7 +5,7 @@ import { ParsedRequest, Theme } from './types';
 export function parseRequest(req: IncomingMessage) {
     console.log('HTTP ' + req.url);
     const { pathname, query } = parse(req.url || '/', true);
-    const { footerURL, images, heights, theme, md, tvl, percentChange } = (query || {});
+    const { footerURL, images, heights, theme, md, tvl, volumeChange } = (query || {});
 
     if (Array.isArray(theme)) {
         throw new Error('Expected a single theme');
@@ -25,13 +25,13 @@ export function parseRequest(req: IncomingMessage) {
 
     let url = getString(footerURL);
     let totalValue = getString(tvl);
-    let percentageChange = getString(percentChange)
+    let percentageChange = getString(volumeChange)
     
     const parsedRequest: ParsedRequest = {
         fileType: extension === 'jpeg' ? extension : 'png',
         text: decodeURIComponent(text),
         tvl: totalValue,
-        percentChange: percentageChange,
+        volumeChange: percentageChange,
         footerURL: decodeURIComponent(url),
         theme: theme === 'dark' ? 'dark' : 'light',
         md: md === '1' || md === 'true',

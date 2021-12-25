@@ -186,7 +186,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
         md = false,
         text = 'Curve Finance',
         tvl = '$100B',
-        percentChange = "-2%",
+        volumeChange = "-2%",
         footerURL = "https://defillama.com/protocol/curve",
         images=[imageLightOptions[0].value, protocolImage],
         heights=[],
@@ -204,7 +204,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
     theme && url.searchParams.append('theme', theme);
     mdValue && url.searchParams.append('md', mdValue);
     tvl && url.searchParams.append('tvl', tvl);
-    percentChange && url.searchParams.append('percentChange', percentChange);
+    volumeChange && url.searchParams.append('volumeChange', volumeChange);
     footerURL && url.searchParams.append("footerURL", encodeURIComponent(footerURL));
 
     for (let image of images) {
@@ -308,9 +308,9 @@ const App = (_: any, state: AppState, setState: SetState) => {
                 H(Field, {
                     label: 'Percent Change',
                     input: H(TextInput, {
-                        value: percentChange,
+                        value: volumeChange,
                         oninput: (val: string) => {
-                            setLoadingState({ percentChange: val, overrideUrl: url });
+                            setLoadingState({ volumeChange: val, overrideUrl: url });
                         }
                     })
                 }),

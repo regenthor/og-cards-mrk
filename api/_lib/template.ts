@@ -180,22 +180,22 @@ function getCss(theme: string, renderOnlyLogo: boolean, tvlExists: boolean, isCh
 }
 
 export function getHtml(parsedReq: ParsedRequest) {
-    const { text, tvl, percentChange, footerURL, theme, md, images, heights } = parsedReq;
+    const { text, tvl, volumeChange, footerURL, theme, md, images, heights } = parsedReq;
     // render only logo, if there is no text, and if there is no additional image selected
     const isDefault = !text || text === "default";
     const renderOnlyLogo =  isDefault && images.length <= 1;
     const tvlExists = tvl ? true : false;
-    const isChangePositive = percentChange?.includes("+") ?? false;
-    const isChangeNegative = percentChange?.includes("-") ?? false;
+    const isChangePositive = volumeChange?.includes("+") ?? false;
+    const isChangeNegative = volumeChange?.includes("-") ?? false;
 
     let trend;
 
     if (isChangePositive) {
-        trend = percentChange.split("+")[1]
+        trend = volumeChange.split("+")[1]
     } else if (isChangeNegative) {
-        trend = percentChange.split("-")[1]
+        trend = volumeChange.split("-")[1]
     } else {
-        trend = percentChange || '';
+        trend = volumeChange || '';
     }
 
     return `<!DOCTYPE html>
