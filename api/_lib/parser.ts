@@ -5,7 +5,7 @@ import { ParsedRequest, Theme } from './types';
 export function parseRequest(req: IncomingMessage) {
     console.log('HTTP ' + req.url);
     const { pathname, query } = parse(req.url || '/', true);
-    const { footerURL, images, heights, theme, md, tvl, volumeChange } = (query || {});
+    const { footerURL, images, theme, md, valueHeader, tvl, volumeChange } = (query || {});
 
     if (Array.isArray(theme)) {
         throw new Error('Expected a single theme');
@@ -13,30 +13,28 @@ export function parseRequest(req: IncomingMessage) {
     
     const arr = (pathname || '/').slice(1).split('.');
     let extension = '';
-    let text = '';
+    let cardName = '';
     if (arr.length === 0) {
-        text = '';
+        cardName = '';
     } else if (arr.length === 1) {
-        text = arr[0];
+        cardName = arr[0];
     } else {
         extension = arr.pop() as string;
-        text = arr.join('.');
+        cardName = arr.join('.');
     }
 
     let url = getString(footerURL);
-    let totalValue = getString(tvl);
-    let percentageChange = getString(volumeChange)
-    
+   
     const parsedRequest: ParsedRequest = {
         fileType: extension === 'jpeg' ? extension : 'png',
-        text: decodeURIComponent(text),
-        tvl: totalValue,
-        volumeChange: percentageChange,
+        cardName: decodeURIComponent(cardName),
+        valueHeader: getString(valueHeader),
+        tvl: getString(tvl),
+        volumeChange: getString(volumeChange),
         footerURL: decodeURIComponent(url),
         theme: theme === 'dark' ? 'dark' : 'light',
         md: md === '1' || md === 'true',
         images: getArray(images),
-        heights: getArray(heights),
     };
     parsedRequest.images = getDefaultImages(parsedRequest.images, parsedRequest.theme);
     return parsedRequest;

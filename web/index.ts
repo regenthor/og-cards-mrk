@@ -147,16 +147,6 @@ const imageDarkOptions: DropdownOption[] = [
 
 const protocolImage = "https://raw.githubusercontent.com/DefiLlama/defillama-app/main/public/icons/curve.jpg"
 
-const heightOptions = [
-    { text: 'height', value: 'auto' },
-    { text: '50', value: '50' },
-    { text: '100', value: '100' },
-    { text: '150', value: '150' },
-    { text: '200', value: '200' },
-    { text: '250', value: '250' },
-    { text: '300', value: '300' },
-    { text: '350', value: '350' },
-];
 
 interface AppState extends ParsedRequest {
     loading: boolean;
@@ -184,12 +174,12 @@ const App = (_: any, state: AppState, setState: SetState) => {
         fileType = 'png',
         theme = 'light',
         md = false,
-        text = 'Curve Finance',
+        cardName = 'Curve Finance',
+        valueHeader = 'Total Value Locked',
         tvl = '$100B',
         volumeChange = "-2%",
         footerURL = "https://defillama.com/protocol/curve",
         images=[imageLightOptions[0].value, protocolImage],
-        heights=[],
         showToast = false,
         messageToast = '',
         loading = true,
@@ -200,9 +190,10 @@ const App = (_: any, state: AppState, setState: SetState) => {
     const mdValue = md ? '1' : '0';
     const imageOptions = theme === 'light' ? imageLightOptions : imageDarkOptions;
     const url = new URL(window.location.origin);
-    url.pathname = `${text ? encodeURIComponent(text) : "default"}.${fileType}`;
+    url.pathname = `${cardName ? encodeURIComponent(cardName) : "default"}.${fileType}`;
     theme && url.searchParams.append('theme', theme);
     mdValue && url.searchParams.append('md', mdValue);
+    valueHeader && url.searchParams.append('valueHeader', valueHeader);
     tvl && url.searchParams.append('tvl', tvl);
     volumeChange && url.searchParams.append('volumeChange', volumeChange);
     footerURL && url.searchParams.append("footerURL", encodeURIComponent(footerURL));
@@ -210,9 +201,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
     for (let image of images) {
         url.searchParams.append('images', image);
     }
-    for (let height of heights) {
-        url.searchParams.append('heights', height);
-    }
+  
 
     const showAddImageBtn = images.length === 1 ? ( H(Field, {
         label: `Image`,
@@ -264,19 +253,6 @@ const App = (_: any, state: AppState, setState: SetState) => {
                                 setLoadingState({ images: clone, selectedImageIndex: selected });
                             }
                         }),
-                        H('div',
-                            { className: 'field-flex' },
-                            H(Dropdown, {
-                                options: heightOptions,
-                                value: heights[0],
-                                small: true,
-                                onchange: (val: string) =>  {
-                                    let clone = [...heights];
-                                    clone[0] = val;
-                                    setLoadingState({ heights: clone });
-                                }
-                            })
-                        )
                     ),
                 }),
                 H(Field, {
@@ -290,9 +266,18 @@ const App = (_: any, state: AppState, setState: SetState) => {
                 H(Field, {
                     label: 'Name',
                     input: H(TextInput, {
-                        value: text,
+                        value: cardName,
                         oninput: (val: string) => {
-                            setLoadingState({ text: val, overrideUrl: url });
+                            setLoadingState({ cardName: val, overrideUrl: url });
+                        }
+                    })
+                }),
+                H(Field, {
+                    label: 'Value Header',
+                    input: H(TextInput, {
+                        value: valueHeader,
+                        oninput: (val: string) => {
+                            setLoadingState({ valueHeader: val, overrideUrl: url });
                         }
                     })
                 }),
@@ -337,27 +322,13 @@ const App = (_: any, state: AppState, setState: SetState) => {
                         }),
                         H('div',
                             { className: 'field-flex' },
-                            H(Dropdown, {
-                                options: heightOptions,
-                                value: heights[i + 1],
-                                small: true,
-                                onchange: (val: string) =>  {
-                                    let clone = [...heights];
-                                    clone[i + 1] = val;
-                                    setLoadingState({ heights: clone });
-                                }
-                            })
-                        ),
-                        H('div',
-                            { className: 'field-flex' },
                             H(Button, {
                                 label: `Remove Image`,
                                 onclick: (e: MouseEvent) => {
                                     e.preventDefault();
                                     const filter = (arr: any[]) => [...arr].filter((_, n) => n !== i + 1);
                                     const imagesClone = filter(images);
-                                    const heightsClone = filter(heights);
-                                    setLoadingState({ images: imagesClone, heights: heightsClone });
+                                    setLoadingState({ images: imagesClone });
                                 }
                             })
                         )
