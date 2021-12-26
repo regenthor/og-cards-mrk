@@ -2,7 +2,7 @@
 import { readFileSync } from 'fs';
 import marked from 'marked';
 import { sanitizeHtml } from './sanitizer';
-import { ParsedRequest } from './types';
+import { ParsedRequest, IRenderContent, IRenderWithPrice, IRenderWithoutPrice } from './types';
 const twemoji = require('twemoji');
 const twOptions = { folder: 'svg', ext: '.svg' };
 const emojify = (text: string) => twemoji.parse(text, twOptions);
@@ -10,33 +10,6 @@ const emojify = (text: string) => twemoji.parse(text, twOptions);
 const rglr = readFileSync(`${__dirname}/../_fonts/Inter-Regular.woff2`).toString('base64');
 const bold = readFileSync(`${__dirname}/../_fonts/Inter-Bold.woff2`).toString('base64');
 const mono = readFileSync(`${__dirname}/../_fonts/Vera-Mono.woff2`).toString('base64');
-
-interface IRenderContent {
-    cardName?: string
-    images: string[]
-    valueHeader: string
-    md: boolean
-    tvl: string
-    trend: string
-    isChangePositive: boolean
-    isChangeNegative: boolean
-}
-
-interface IRenderWithPrice {
-    images: string[] 
-    cardName: string
-    tvl: string
-    valueHeader: string
-    isChangePositive: boolean
-    isChangeNegative: boolean
-    md: boolean, 
-    trend: string
-}
-interface IRenderWithoutPrice {
-    images: string[] 
-    cardName: string
-    md: boolean
-}
 
 function getCss(theme: string, isChangePositive: boolean) {
     let background = 'white';
@@ -254,7 +227,7 @@ function getImage(src: string, height = '80', className = 'logo') {
 }
 
 function renderContent({cardName, images, valueHeader, md, tvl, isChangePositive, isChangeNegative, trend}: IRenderContent) {
-    if (images.length <= 1 || !cardName || cardName === "default") {
+    if (!cardName || cardName === "default") {
         return renderOnlyLogo(images[0])
     } else if (!valueHeader || !tvl) {
         return renderWithoutPrice({images, cardName, md})
