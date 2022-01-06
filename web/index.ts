@@ -136,16 +136,16 @@ const markdownOptions: DropdownOption[] = [
 ];
 
 const imageLightOptions: DropdownOption[] = [
-    { text: 'DefiLlama', value: 'https://raw.githubusercontent.com/DefiLlama/defillama-press-kit/master/SVG/defillama-dark.svg' },
-    { text: 'DefiLlamaNFT', value: 'https://raw.githubusercontent.com/DefiLlama/defillama-press-kit/master/SVG/defillama-nft-dark.svg' },
+    { text: 'DefiLlama', value: 'https://defillama.com/defillama-press-kit/defi/SVG/defillama-dark.svg' },
+    { text: 'DefiLlamaNFT', value: 'https://defillama.com/defillama-press-kit/nft/SVG/defillama-nft-dark.svg' },
 ];
 
 const imageDarkOptions: DropdownOption[] = [
-    { text: 'DefiLlama', value: 'https://raw.githubusercontent.com/DefiLlama/defillama-press-kit/master/SVG/defillama.svg' },
-    { text: 'DefiLlamaNFT', value: 'https://raw.githubusercontent.com/DefiLlama/defillama-press-kit/master/SVG/defillama-nft.svg' },
+    { text: 'DefiLlama', value: 'https://defillama.com/defillama-press-kit/defi/SVG/defillama.svg' },
+    { text: 'DefiLlamaNFT', value: 'https://defillama.com/defillama-press-kit/nft/SVG/defillama-nft.svg' },
 ];
 
-const protocolImage = "https://raw.githubusercontent.com/DefiLlama/defillama-app/main/public/icons/curve.jpg"
+const protocolImage = "https://defillama.com/icons/curve.jpg"
 
 
 interface AppState extends ParsedRequest {
@@ -171,7 +171,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
         setState({ ...newState, loading: true });
     };
     const {
-        fileType = 'png',
+        fileType = 'jpeg',
         theme = 'light',
         md = false,
         cardName = 'Curve Finance',
@@ -208,7 +208,7 @@ const App = (_: any, state: AppState, setState: SetState) => {
         input: H(Button, {
             label: `Add Image`,
             onclick: () => {
-                const nextImage = 'https://raw.githubusercontent.com/DefiLlama/defillama-app/main/public/icons/curve.jpg'
+                const nextImage = 'https://defillama.com/icons/curve.jpg'
                 setLoadingState({ images: [...images, nextImage] })
             }
         }),

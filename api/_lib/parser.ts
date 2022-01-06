@@ -64,8 +64,8 @@ function getString(stringOrArray: string[] | string | undefined) {
 
 function getDefaultImages(images: string[], theme: Theme): string[] {
     const defaultImage = theme === 'light'
-        ? "https://raw.githubusercontent.com/DefiLlama/defillama-press-kit/master/SVG/defillama.svg"
-        : "https://raw.githubusercontent.com/DefiLlama/defillama-press-kit/master/SVG/defillama-dark.svg";
+        ? "https://defillama.com/defillama-press-kit/defi/SVG/defillama-dark.svg"
+        : "https://defillama.com/defillama-press-kit/defi/SVG/defillama.svg";
 
     if (!images || !images[0]) {
         return [defaultImage];
