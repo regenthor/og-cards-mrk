@@ -4,37 +4,36 @@ export type Theme = 'light' | 'dark';
 export interface ParsedRequest {
     fileType: FileType;
     cardName: string;
-    valueHeader: string;
     tvl: string;
-    volumeChange: string;
-    footerURL: string;
+    type: string;
+    address: string;
+    volume: string;
+    chainId: string;
     theme: Theme;
     md: boolean;
-    images: string[];
 }
 export interface IRenderContent {
-    cardName?: string
-    images: string[]
-    valueHeader: string
-    md: boolean
-    tvl: string
-    trend: string
-    isChangePositive: boolean
-    isChangeNegative: boolean
+    cardName?: string;
+    volume: string;
+    chainId: string;
+    address: string;
+    md: boolean;
+    tvl: string;
+    theme: string;
+    type: string;
 }
 
 export interface IRenderWithPrice {
-    images: string[] 
-    cardName: string
-    tvl: string
-    valueHeader: string
-    isChangePositive: boolean
-    isChangeNegative: boolean
-    md: boolean, 
-    trend: string
+    cardName?: string;
+    tvl: string;
+    address: string;
+    type: string;
 }
-export interface IRenderWithoutPrice {
-    images: string[] 
-    cardName: string
-    md: boolean
+export interface IRenderToken {
+    cardName?: string;
+    chainId: string;
+    address: string;
+    type: string;
+    md: boolean;
+    volume: string;
 }

@@ -1,47 +1,45 @@
 
 import { readFileSync } from 'fs';
-import marked from 'marked';
 import { sanitizeHtml } from './sanitizer';
-import { ParsedRequest, IRenderContent, IRenderWithPrice, IRenderWithoutPrice } from './types';
-const twemoji = require('twemoji');
-const twOptions = { folder: 'svg', ext: '.svg' };
-const emojify = (text: string) => twemoji.parse(text, twOptions);
+import { ParsedRequest, IRenderContent, IRenderWithPrice, IRenderToken } from './types';
 
-const rglr = readFileSync(`${__dirname}/../_fonts/Inter-Regular.woff2`).toString('base64');
-const bold = readFileSync(`${__dirname}/../_fonts/Inter-Bold.woff2`).toString('base64');
-const mono = readFileSync(`${__dirname}/../_fonts/Vera-Mono.woff2`).toString('base64');
 
-function getCss(theme: string, isChangePositive: boolean) {
-    let background = 'white';
-    let foreground = 'black';
+const rglr = readFileSync(`${__dirname}/../_fonts/Poppins-Regular.woff2`).toString('base64');
+const bold = readFileSync(`${__dirname}/../_fonts/Poppins-SemiBold.woff2`).toString('base64');
+const dark_bg_protocol_url = `https://raw.githubusercontent.com/regenthor/markr-og-images/main/theme/markr-og-card-filled.png`;
+const dark_bg_token_url = `https://raw.githubusercontent.com/regenthor/markr-og-images/main/theme/markr-og-card-red.png`;
+const dark_default_url = `https://raw.githubusercontent.com/regenthor/markr-og-images/main/theme/markr-og-card-red.png`;
+
+function getCss(theme: string, type: string) {
+    let fontColor = "#000000"
+    let keynoteColor = "#e84344";
+    let bg_url = dark_default_url;
+
+    if (type == "token") {
+        bg_url = dark_bg_token_url;
+        keynoteColor = "#000000";
+    } else if (type == "protocols") {
+        bg_url = dark_bg_protocol_url;
+    }
 
     if (theme === 'dark') {
-        background = '#262938';
-        foreground = '#FFFFFF';
+        fontColor = "#FFFFFF";
     }
 
     return `
     @font-face {
-        font-family: 'Inter';
+        font-family: 'Poppins';
         font-style:  normal;
         font-weight: normal;
         src: url(data:font/woff2;charset=utf-8;base64,${rglr}) format('woff2');
     }
 
     @font-face {
-        font-family: 'Inter';
+        font-family: 'Poppins';
         font-style:  normal;
         font-weight: bold;
         src: url(data:font/woff2;charset=utf-8;base64,${bold}) format('woff2');
     }
-
-    @font-face {
-        font-family: 'Vera';
-        font-style: normal;
-        font-weight: normal;
-        src: url(data:font/woff2;charset=utf-8;base64,${mono})  format("woff2");
-      }
-
     *, *::before, *::after {
         box-sizing: border-box;
     }
@@ -53,148 +51,131 @@ function getCss(theme: string, isChangePositive: boolean) {
     body {
         display: flex;
         flex-direction: column;
+        justify-content:space-between;
         height: 100vh;
         padding: 48px;
-        background: ${background};
-        font-family: 'Inter', sans-serif;
+        background-image: url(${bg_url});
+        background-size: cover;
+        font-family: 'Poppins', sans-serif;
         font-style: normal;
         letter-spacing: -0.01em;
     }
 
-    code {
-        color: #D400FF;
-        font-family: 'Vera';
-        white-space: pre-wrap;
-        letter-spacing: -5px;
-    }
-
-    code:before, code:after {
-        content: '\`';
-    }
-
     .header {
         display: flex;
-        justify-content: space-between;
         align-items: center;
     }
 
-    .header .details {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        color: ${foreground};
-        overflow: hidden;
+    .tvl-text-width {
+        width:60%;
     }
 
-    .header .details .name {
-        font-weight: 600;
-        font-size: 48px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .token-text-width {
+        width:100%;
     }
 
-    .logo {
-        margin-left: "100px";
+    .header .description-tvl {
+        color: ${fontColor};
+        font-family: Poppins;
+        display:flex;
+        padding: 0rem;
+        height: min-content;
+        font-size: 3rem;
+        font-weight: 500;
+        span {
+            margin: 0px !important;
+        }
     }
 
-    .tokenLogo {
-        margin-right: 32px;
-        border-radius: 50%;
+    .margin-auto {
+        margin: auto;
     }
 
-    .main {
-        padding: 40px;
-        padding-bottom: 32px;
-        background: ${theme === "dark" ? "#1C1F2E" : "rgba(230, 232, 248, 0.6)"};
-        margin: auto 0;
-        width: fit-content;
-        min-width: 70%;
-        border-radius: 40px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .keynote {
+        color: ${keynoteColor};
+    }
+    .theme-text {
+        color: ${fontColor} !important;
+    }
+    .main .app-icon {
+            height:125px;
+            width:125px;
+            border-radius:100%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            margin-right:75px;
+    }
+
+    .main .app-icon  img {
+        height:100%;
+        width: 100%;
+        border-radius:100%;
+    }
+
+    .default-icon {
+        height: 175px !important;
+        width: 175px !important; 
     }
 
     .main .title {
-        font-weight: 500;
-        font-size: 32px;
-        color: ${theme === "dark" ? "#777B92" : "#8C90B0"};
+        font-weight:400;
+        font-size: 1rem;
+        color: ${fontColor};
     }
-
-    .main .details {
-        margin-top: 44px;
-        display: flex;
-        align-items: baseline;
+    .main .value {
+        font-size: 3.5rem;
+        color: ${fontColor};
     }
-
-    .main .details .value{
-        font-weight: 600;
-        font-size: 104px;
-        color: ${theme === "dark" ? "#FFFFFF" : "#213295"};
-        margin-right: 40px;
+    .flex {
+        display:flex;
     }
-
-    .main .details .change {
-        font-weight: 600;
-        font-size: 44px;
-        color: ${isChangePositive ? "#4BA433" : "#FF3F28"};
+    .wrap-div {
+        flex-direction:column;
     }
-
-    .change svg {
-        height: 44px;
-        width: 44px;
-        position: relative;
-        top: 8px;
-        right: -12px;
+    .items-center {
+        align-items:center;
     }
-
-    .center {
-        flex: 1;
-        display: flex;
+    .font-bold {
+        font-weight:600;
+    }
+    .font-medium {
+        font-weight:500 !important; 
+    }
+    .logo-footer {
+        height:75px;
+        width:100%;
+        display:flex;
+        justify-content:flex-end;
+    }
+    .logo-footer .markr-logo {
+        height:75px;
+        width:75px;
+    }
+    .text-uppercase {
+        text-transform: uppercase;
+    }
+    .justify-center {
         justify-content: center;
-        align-items: center;
     }
-
-    .header.center {
-        justify-content: space-between;
+    .flex-col {
+        flex-direction: column;
     }
-
-    .font-40px {
-        font-size: 40px !important;
+    .full-size {
+        height:100%;
+        width:100%;
     }
-    
-    .footer {
-        font-style: italic;
-        font-weight: normal;
-        font-size: 24px;
-        color: ${theme === "dark" ? "rgba(149, 153, 171, 0.9)" : "#575A68"};
-        margin-bottom: -16px;
+    .space-around {
+            justify-content: space-around;
     }
-
-    .emoji {
-        height: 1em;
-        width: 1em;
-        margin: 0 .05em 0 .1em;
-        vertical-align: -0.1em;
-    }`;
+    .mr-0 {
+        margin-right:0px !important;
+    }
+    `;
 }
 
 export function getHtml(parsedReq: ParsedRequest) {
-    const { cardName, valueHeader, tvl, volumeChange, footerURL, theme, md, images } = parsedReq;
-
-    const isChangePositive = volumeChange?.includes("+") ?? false;
-    const isChangeNegative = volumeChange?.includes("-") ?? false;
-
-    let trend: string;
-
-    if (isChangePositive) {
-        trend = volumeChange.split("+")[1]
-    } else if (isChangeNegative) {
-        trend = volumeChange.split("-")[1]
-    } else {
-        trend = volumeChange || '';
-    }
+    const { cardName, volume, type, tvl, address, theme, md, chainId } = parsedReq;
 
     return `<!DOCTYPE html>
             <html>
@@ -202,79 +183,130 @@ export function getHtml(parsedReq: ParsedRequest) {
                 <title>Generated Image</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1">
                 <style>
-                    ${getCss(theme, isChangePositive)}
+                    ${getCss(theme, type)}
                 </style>
                 <body>
-                    ${renderContent({cardName, images, valueHeader, md, tvl, isChangePositive, isChangeNegative, trend})}
-                    <div class="footer">
-                        Defi Llama is committed to providing accurate data without advertisements or sponsored content, as well as transparency. Learn more on :
-                        ${emojify(
-                            md ? marked(footerURL) : sanitizeHtml(footerURL || "https://defillama.com")
-                        )}
-                    </div>
+                    ${renderContent({ cardName, volume, type, tvl, address, theme, md, chainId })}
                 </body>
             </html>`;
-    }
+}
 
-function getImage(src: string, height = '80', className = 'logo') {
+function getTokenImage(address: string, chainId: string, className = 'logo') {
+    const root = `https://raw.githubusercontent.com/satatocom/markr-tokens/master/${chainId}/${address}/logo.png`;
     return `<img
         class="${sanitizeHtml(className)}"
-        src="${sanitizeHtml(src)}"
+        src="${root}"
+        onerror="this.onerror=null; this.remove();"
+    />`
+}
+function getProtocolImage(src: string, height = '80', className = 'logo', type: string) {
+
+    const root = `https://raw.githubusercontent.com/satatocom/markr-tokens/master/${type}/${src}/logo.png`
+    return `<img
+        class="${sanitizeHtml(className)}"
+        src="${root}"
         width="auto"
         height="${sanitizeHtml(height)}"
         onerror="this.onerror=null; this.remove();"
     />`
 }
 
-function renderContent({cardName, images, valueHeader, md, tvl, isChangePositive, isChangeNegative, trend}: IRenderContent) {
-    if (!cardName || cardName === "default") {
-        return renderOnlyLogo(images[0])
-    } else if (!valueHeader || !tvl) {
-        return renderWithoutPrice({images, cardName, md})
+function renderContent({ cardName, volume, type, tvl, address, md, chainId }: IRenderContent) {
+    if (type == "default") {
+        return renderOnlyLogo();
+    } else if (type == "token") {
+        return renderToken({ cardName, address, type, volume, md, chainId })
+    } else if (type == "protocols") {
+        return renderTvl({ cardName, type, tvl, address })
+    } else if (cardName != undefined) {
+        return renderOnlyCardNameLogo(cardName);
     } else {
-        return renderWithPrice({images, cardName, tvl, valueHeader, isChangePositive, isChangeNegative, md, trend})
+        return renderOnlyLogo();
     }
 }
 
 
-function renderOnlyLogo(image: string) {
-    return `<div class="center">
-                ${getImage(image, "120", "logo")}
-            </div>`
+function getMarkrLogo() {
+    const url = "https://raw.githubusercontent.com/regenthor/markr-og-images/main/theme/logos/markr-logo.png";
+    return `
+      <img
+        class="markr-logo"
+        src="${url}"
+        onerror="this.onerror=null; this.remove();"
+    />
+    `
 }
 
-function renderWithoutPrice({images, cardName, md}: IRenderWithoutPrice) {
-    return `<div class="header center">
-                <div class="details">
-                    ${getImage(images[1], '100', "tokenLogo")}
-                    <div class="name font-40px">${emojify(
-                        md ? marked(cardName) : sanitizeHtml(cardName)
-                    )}</div>
-                </div>
-                ${getImage(images[0], '100', "logo")}
-            </div>`
-}
-
-function renderWithPrice({images, cardName, tvl, valueHeader, isChangePositive, isChangeNegative, md, trend}: IRenderWithPrice) {
-    return `<div class="header">
-                <div class="details">
-                    ${getImage(images[1], '80', "tokenLogo")}
-                    <div class="name">${emojify(
-                        md ? marked(cardName) : sanitizeHtml(cardName)
-                    )}</div>
-                </div>
-                ${getImage(images[0], '80', "logo")}
-            </div>
-            <div class="main">
-                <div class="title">${sanitizeHtml(valueHeader)}</div>
-                <div class="details">
-                    <div class="value">${sanitizeHtml(tvl)}</div>
-                    <div class="change">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d=${isChangePositive ? `"M7 11l5-5m0 0l5 5m-5-5v12"` : isChangeNegative ? `"M17 13l-5 5m0 0l-5-5m5 5V6"` : ''} />
-                        </svg>
-                        ${sanitizeHtml(trend)}
+function renderOnlyLogo() {
+    return `<div class="flex items-center justify-center flex-col full-size" style="position:relative;"> 
+                <div class="main flex items-center token-text-width justify-center">
+                    <div class="app-icon default-icon mr-0">
+                        ${getMarkrLogo()}
                     </div>
                 </div>
             </div>`
+}
+
+function renderOnlyCardNameLogo(cardName: any) {
+    return `<div class="flex items-center justify-center flex-col full-size" style="position:relative;"> 
+                <div class="header">
+                    <div class="description-tvl token-text-width flex-col justify-center items-center">
+                        <span class="">${cardName}</span>
+                    </div>
+                </div>
+                <div class="main flex items-center token-text-width justify-center" style="padding-top:1rem;">
+                    <div class="app-icon mr-0">
+                        ${getMarkrLogo()}
+                    </div>
+                </div>
+            </div>`
+}
+// <div class="logo-footer" >
+//     ${ getMarkrLogo() }
+// </div>
+function renderToken({ cardName, address, volume, chainId }: IRenderToken) {
+    return `<div class="flex items-center space-around flex-col full-size" style="position:relative;"> 
+                <div class="header">
+                    <div class="description-tvl margin-auto token-text-width flex-col justify-center items-center">
+                        <span>Token Update</span>
+                        <span class="keynote font-bold">${cardName}, <span class="theme-text font-medium">available on Markr.</span> </span>
+                    </div>
+                </div>
+                <div class="main flex items-center" style="padding-bottom:48px;">
+                    <div class="app-icon">
+                        ${getTokenImage(address, chainId, "logo")}
+                    </div>
+                    <div class="flex wrap-div">
+                            <div class="title">Total Volume</div>
+                            <div class="value bold-font text-uppercase">${sanitizeHtml(volume)}</div>
+                    </div>
+                </div>
+                <div class="logo-footer" style="position:absolute; bottom:48px; left:0px; padding-right:48px;">
+                        ${getMarkrLogo()}
+                </div>
+            </div>
+    `
+}
+
+function renderTvl({ cardName, tvl, address, type }: IRenderWithPrice) {
+    console.log("Address: ", address);
+    return `<div class="header">
+                <div class="description-tvl tvl-text-width">
+                    <span>${cardName}, <span class="keynote">available on Markr.</span> </span>
+                </div>
+            </div>
+            <div class="main flex items-center">
+                <div class="app-icon"> 
+                    ${getProtocolImage(address, "120", "logo", type)}
+                </div>
+                <div class="flex wrap-div">
+                        <div class="title">Total Value Locked</div>
+                        <div class="value bold-font text-uppercase">${sanitizeHtml(tvl)}</div>
+                </div>
+                </div>
+            </div>
+            <div class="logo-footer">
+                ${getMarkrLogo()}
+            </div>
+            `
 }
