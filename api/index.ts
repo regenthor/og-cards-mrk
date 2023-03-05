@@ -4,17 +4,17 @@ import { getScreenshot } from './_lib/chromium';
 import { getHtml } from './_lib/template';
 
 const isDev = false;
-const isHtmlDebug = false;
+// const isHtmlDebug = false;
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
     try {
         const parsedReq = parseRequest(req);
         const html = getHtml(parsedReq);
-        if (isHtmlDebug) {
-            res.setHeader('Content-Type', 'text/html');
-            res.end(html);
-            return;
-        }
+        // if (isHtmlDebug) {
+        //     res.setHeader('Content-Type', 'text/html');
+        //     res.end(html);
+        //     return;
+        // }
         const { fileType } = parsedReq;
         const file = await getScreenshot(html, fileType, isDev);
         res.statusCode = 200;

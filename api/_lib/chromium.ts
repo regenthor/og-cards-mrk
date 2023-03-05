@@ -8,7 +8,9 @@ async function getPage(isDev: boolean) {
         return _page;
     }
     const options = await getOptions(isDev);
+    console.log("Options: ", options);
     const browser = await core.launch(options);
+    console.log("Broser: ", browser)
     _page = await browser.newPage();
     return _page;
 }
