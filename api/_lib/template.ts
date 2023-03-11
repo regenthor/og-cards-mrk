@@ -349,7 +349,7 @@ function renderPair({ cardName, tvl, address, chainId, chainName }: IRenderPair)
                     </div>
 
                     <div class="flex wrap-div">
-                            <div class="title">Volume</div>
+                            <div class="title">Total Value Locked</div>
                             <div class="value bold-font text-uppercase">${sanitizeHtml(tvl)}</div>
                     </div>
                 </div>
