@@ -3,7 +3,7 @@ import { parseRequest } from './_lib/parser';
 import { getScreenshot } from './_lib/chromium';
 import { getHtml } from './_lib/template';
 
-const isDev = false;
+const isDev = true;
 // const isHtmlDebug = false;
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {

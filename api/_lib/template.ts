@@ -1,7 +1,7 @@
 
 import { readFileSync } from 'fs';
 import { sanitizeHtml } from './sanitizer';
-import { ParsedRequest, IRenderContent, IRenderWithPrice, IRenderToken } from './types';
+import { ParsedRequest, IRenderContent, IRenderWithPrice, IRenderToken, IRenderPair } from './types';
 
 
 const rglr = readFileSync(`${__dirname}/../_fonts/Poppins-Regular.woff2`).toString('base64');
@@ -18,7 +18,7 @@ function getCss(theme: string, type: string) {
     if (type == "token") {
         bg_url = dark_bg_token_url;
         keynoteColor = "#000000";
-    } else if (type == "protocols") {
+    } else if (type == "protocols" || type == "pair") {
         bg_url = dark_bg_protocol_url;
     }
 
@@ -107,12 +107,34 @@ function getCss(theme: string, type: string) {
             margin-right:75px;
     }
 
+    .main .pair-container .app-icon {
+        margin-right: 0px !important;
+    }
+
     .main .app-icon  img {
         height:100%;
         width: 100%;
         border-radius:100%;
     }
-
+    .diff-text {
+        font-size:0.775rem !important;
+        display:flex;
+        padding: 1px 6px;
+        background: #ffffffb0;
+        border-radius:4px;
+        align-items:center;
+        color:black;
+        margin-left:0.75rem;
+    }
+    .positive-text {
+        color:#2ECC71;
+        font-weight:600;
+    }
+    
+    .negative-text {
+        color:#E84343;
+        font-weight:600;
+    }
     .default-icon {
         height: 175px !important;
         width: 175px !important; 
@@ -175,7 +197,7 @@ function getCss(theme: string, type: string) {
 }
 
 export function getHtml(parsedReq: ParsedRequest) {
-    const { cardName, volume, type, tvl, address, theme, md, chainId } = parsedReq;
+    const { cardName, volume, type, tvl, address, theme, md, chainId, chainName, diff } = parsedReq;
 
     return `<!DOCTYPE html>
             <html>
@@ -186,7 +208,7 @@ export function getHtml(parsedReq: ParsedRequest) {
                     ${getCss(theme, type)}
                 </style>
                 <body>
-                    ${renderContent({ cardName, volume, type, tvl, address, theme, md, chainId })}
+                    ${renderContent({ cardName, volume, type, tvl, address, theme, md, chainId, chainName, diff })}
                 </body>
             </html>`;
 }
@@ -200,7 +222,6 @@ function getTokenImage(address: string, chainId: string, className = 'logo') {
     />`
 }
 function getProtocolImage(src: string, height = '80', className = 'logo', type: string) {
-
     const root = `https://raw.githubusercontent.com/satatocom/markr-tokens/master/${type}/${src}/logo.png`
     return `<img
         class="${sanitizeHtml(className)}"
@@ -211,13 +232,15 @@ function getProtocolImage(src: string, height = '80', className = 'logo', type: 
     />`
 }
 
-function renderContent({ cardName, volume, type, tvl, address, md, chainId }: IRenderContent) {
+function renderContent({ cardName, volume, type, tvl, address, md, chainId, chainName, diff }: IRenderContent) {
     if (type == "default") {
         return renderOnlyLogo();
     } else if (type == "token") {
-        return renderToken({ cardName, address, type, volume, md, chainId })
+        return renderToken({ cardName, address, type, volume, md, chainId, chainName, diff })
     } else if (type == "protocols") {
         return renderTvl({ cardName, type, tvl, address })
+    } else if (type == "pair") {
+        return renderPair({ cardName, tvl, address, chainId, type, chainName })
     } else if (cardName != undefined) {
         return renderOnlyCardNameLogo(cardName);
     } else {
@@ -264,12 +287,14 @@ function renderOnlyCardNameLogo(cardName: any) {
 // <div class="logo-footer" >
 //     ${ getMarkrLogo() }
 // </div>
-function renderToken({ cardName, address, volume, chainId }: IRenderToken) {
+function renderToken({ cardName, address, volume, chainId, chainName, diff }: IRenderToken) {
+    const token_diff = parseFloat(diff);
+
     return `<div class="flex items-center space-around flex-col full-size" style="position:relative;"> 
                 <div class="header">
                     <div class="description-tvl margin-auto token-text-width flex-col justify-center items-center">
                         <span>Token Update</span>
-                        <span class="keynote font-bold">${cardName}, <span class="theme-text font-medium">available on Markr.</span> </span>
+                        <span class="keynote font-bold">${cardName}, <span class="theme-text font-medium">available on </span>${chainName}. </span>
                     </div>
                 </div>
                 <div class="main flex items-center" style="padding-bottom:48px;">
@@ -277,7 +302,7 @@ function renderToken({ cardName, address, volume, chainId }: IRenderToken) {
                         ${getTokenImage(address, chainId, "logo")}
                     </div>
                     <div class="flex wrap-div">
-                            <div class="title">Total Volume</div>
+                            <div class="title flex">Token Price <span class="diff-text">24h <span style="margin-left:4px;" class="${token_diff > 0 ? 'positive-text' : token_diff < 0 ? 'negative-text' : 'default-text'}">%${token_diff.toFixed(2)}</span> </span></div>
                             <div class="value bold-font text-uppercase">${sanitizeHtml(volume)}</div>
                     </div>
                 </div>
@@ -288,11 +313,11 @@ function renderToken({ cardName, address, volume, chainId }: IRenderToken) {
     `
 }
 
-function renderTvl({ cardName, tvl, address, type }: IRenderWithPrice) {
+function renderTvl({ cardName, tvl, address, type, chainName }: IRenderWithPrice) {
     console.log("Address: ", address);
     return `<div class="header">
                 <div class="description-tvl tvl-text-width">
-                    <span>${cardName}, <span class="keynote">available on Markr.</span> </span>
+                    <span>${cardName}, <span class="keynote">available on </span>${chainName}.</span>
                 </div>
             </div>
             <div class="main flex items-center">
@@ -303,6 +328,30 @@ function renderTvl({ cardName, tvl, address, type }: IRenderWithPrice) {
                         <div class="title">Total Value Locked</div>
                         <div class="value bold-font text-uppercase">${sanitizeHtml(tvl)}</div>
                 </div>
+                </div>
+            </div>
+            <div class="logo-footer">
+                ${getMarkrLogo()}
+            </div>
+            `
+}
+
+function renderPair({ cardName, tvl, address, chainId, chainName }: IRenderPair) {
+    const addresses = address.split("+");
+    return `<div class="header">
+                <div class="description-tvl tvl-text-width">
+                    <span>${cardName}, <span class="keynote"> pair available on </span>${chainName}. </span>
+                </div>
+            </div>
+            <div class="main flex items-center">
+                    <div class="flex items-center pair-container">
+                        ${addresses.map((adr: string, index: number) => ` <div class="app-icon" style="left:-${index * 52}px; position:relative"> ${getTokenImage(adr, chainId, "logo")} </div>`)}
+                    </div>
+
+                    <div class="flex wrap-div">
+                            <div class="title">Volume</div>
+                            <div class="value bold-font text-uppercase">${sanitizeHtml(tvl)}</div>
+                    </div>
                 </div>
             </div>
             <div class="logo-footer">
