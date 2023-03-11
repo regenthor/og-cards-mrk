@@ -197,7 +197,7 @@ function getCss(theme: string, type: string) {
 }
 
 export function getHtml(parsedReq: ParsedRequest) {
-    const { cardName, volume, type, tvl, address, theme, md, chainId, chainName, diff } = parsedReq;
+    const { cardName, volume, type, tvl, address, theme, md, chainId, chainName, diff, price } = parsedReq;
 
     return `<!DOCTYPE html>
             <html>
@@ -208,7 +208,7 @@ export function getHtml(parsedReq: ParsedRequest) {
                     ${getCss(theme, type)}
                 </style>
                 <body>
-                    ${renderContent({ cardName, volume, type, tvl, address, theme, md, chainId, chainName, diff })}
+                    ${renderContent({ cardName, volume, type, tvl, address, theme, md, chainId, chainName, diff, price })}
                 </body>
             </html>`;
 }
@@ -232,15 +232,15 @@ function getProtocolImage(src: string, height = '80', className = 'logo', type: 
     />`
 }
 
-function renderContent({ cardName, volume, type, tvl, address, md, chainId, chainName, diff }: IRenderContent) {
+function renderContent({ cardName, type, tvl, address, md, chainId, chainName, diff, price }: IRenderContent) {
     if (type == "default") {
         return renderOnlyLogo();
     } else if (type == "token") {
-        return renderToken({ cardName, address, type, volume, md, chainId, chainName, diff })
+        return renderToken({ cardName, address, type, price, md, chainId, chainName, diff })
     } else if (type == "protocols") {
         return renderTvl({ cardName, type, tvl, address })
     } else if (type == "pair") {
-        return renderPair({ cardName, tvl, address, chainId, type, chainName })
+        return renderPair({ cardName, price, address, chainId, type, chainName })
     } else if (cardName != undefined) {
         return renderOnlyCardNameLogo(cardName);
     } else {
@@ -287,7 +287,7 @@ function renderOnlyCardNameLogo(cardName: any) {
 // <div class="logo-footer" >
 //     ${ getMarkrLogo() }
 // </div>
-function renderToken({ cardName, address, volume, chainId, chainName, diff }: IRenderToken) {
+function renderToken({ cardName, address, price, chainId, chainName, diff }: IRenderToken) {
     const token_diff = parseFloat(diff);
 
     return `<div class="flex items-center space-around flex-col full-size" style="position:relative;"> 
@@ -303,7 +303,7 @@ function renderToken({ cardName, address, volume, chainId, chainName, diff }: IR
                     </div>
                     <div class="flex wrap-div">
                             <div class="title flex">Token Price <span class="diff-text">24h <span style="margin-left:4px;" class="${token_diff > 0 ? 'positive-text' : token_diff < 0 ? 'negative-text' : 'default-text'}">%${token_diff > 0 ? '+' : ''}${token_diff.toFixed(2)}</span> </span></div>
-                            <div class="value bold-font text-uppercase">${sanitizeHtml(volume)}</div>
+                            <div class="value bold-font text-uppercase">${sanitizeHtml(price)}</div>
                     </div>
                 </div>
                 <div class="logo-footer" style="position:absolute; bottom:48px; left:0px; padding-right:48px;">
@@ -336,7 +336,7 @@ function renderTvl({ cardName, tvl, address, type, chainName }: IRenderWithPrice
             `
 }
 
-function renderPair({ cardName, tvl, address, chainId, chainName }: IRenderPair) {
+function renderPair({ cardName, price, address, chainId, chainName }: IRenderPair) {
     const addresses = address.split("||");
     return `<div class="header">
                 <div class="description-tvl tvl-text-width">
@@ -349,8 +349,8 @@ function renderPair({ cardName, tvl, address, chainId, chainName }: IRenderPair)
                     </div>
 
                     <div class="flex wrap-div">
-                            <div class="title">Total Value Locked</div>
-                            <div class="value bold-font text-uppercase">${sanitizeHtml(tvl)}</div>
+                            <div class="title">Price</div>
+                            <div class="value bold-font text-uppercase">${sanitizeHtml(price)}</div>
                     </div>
                 </div>
             </div>

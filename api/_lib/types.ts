@@ -7,6 +7,7 @@ export interface ParsedRequest {
     diff: string;
     tvl: string;
     type: string;
+    price: string;
     address: string;
     chainName: string;
     volume: string;
@@ -21,6 +22,7 @@ export interface IRenderContent {
     chainId: string;
     chainName?: any;
     address: string;
+    price: string;
     md: boolean;
     tvl: string;
     theme: string;
@@ -37,7 +39,7 @@ export interface IRenderWithPrice {
 
 export interface IRenderPair {
     cardName?: string;
-    tvl: string;
+    price: string;
     chainName: string;
     address: string;
     type: string;
@@ -50,7 +52,7 @@ export interface IRenderToken {
     chainName: string;
     address: string;
     type: string;
+    price: string;
     md: boolean;
     diff: string;
-    volume: string;
 }

@@ -4,7 +4,7 @@ import { ParsedRequest } from './types';
 
 export function parseRequest(req: IncomingMessage) {
     const { pathname, query } = parse(req.url || '/', true);
-    const { address, theme, md, volume, tvl, type, chainId, chainName, diff } = (query || {});
+    const { address, theme, md, volume, tvl, type, chainId, chainName, diff, price } = (query || {});
 
     if (Array.isArray(theme)) {
         throw new Error('Expected a single theme');
@@ -32,6 +32,7 @@ export function parseRequest(req: IncomingMessage) {
         tvl: getString(tvl),
         chainId: getString(chainId),
         chainName: getString(chainName),
+        price: getString(price),
         type: getString(type),
         diff: getString(diff),
         volume: getString(volume),
