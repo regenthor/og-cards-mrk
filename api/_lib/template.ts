@@ -335,7 +335,7 @@ function renderTvl({ cardName, tvl, address, type, chainName }: IRenderWithPrice
             </div>
             `
 }
-
+// ${ addresses.map((adr: string, index: number) => `<div class="app-icon" style="left:-${index * 52}px; position:relative;"> ${getTokenImage(adr, chainId, "logo")} </div>`) }
 function renderPair({ cardName, tvl, address, chainId, chainName }: IRenderPair) {
     const addresses = address.split("+");
     return `<div class="header">
@@ -345,7 +345,8 @@ function renderPair({ cardName, tvl, address, chainId, chainName }: IRenderPair)
             </div>
             <div class="main flex items-center">
                     <div class="flex items-center pair-container">
-                        ${addresses.map((adr: string, index: number) => ` <div class="app-icon" style="left:-${index * 52}px; position:relative;"> ${getTokenImage(adr, chainId, "logo")} </div>`)}
+                        <div class="app-icon" style="left:${0}px; position:relative;"> ${getTokenImage(addresses[0], chainId, "logo")} </div>
+                        <div class="app-icon" style="left:-${52}px; position:relative;"> ${getTokenImage(addresses[1], chainId, "logo")} </div>
                     </div>
 
                     <div class="flex wrap-div">
