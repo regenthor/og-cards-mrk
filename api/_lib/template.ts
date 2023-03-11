@@ -302,7 +302,7 @@ function renderToken({ cardName, address, volume, chainId, chainName, diff }: IR
                         ${getTokenImage(address, chainId, "logo")}
                     </div>
                     <div class="flex wrap-div">
-                            <div class="title flex">Token Price <span class="diff-text">24h <span style="margin-left:4px;" class="${token_diff > 0 ? 'positive-text' : token_diff < 0 ? 'negative-text' : 'default-text'}">%${token_diff.toFixed(2)}</span> </span></div>
+                            <div class="title flex">Token Price <span class="diff-text">24h <span style="margin-left:4px;" class="${token_diff > 0 ? 'positive-text' : token_diff < 0 ? 'negative-text' : 'default-text'}">%${token_diff > 0 ? '+' : ''}${token_diff.toFixed(2)}</span> </span></div>
                             <div class="value bold-font text-uppercase">${sanitizeHtml(volume)}</div>
                     </div>
                 </div>
