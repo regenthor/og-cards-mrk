@@ -168,7 +168,12 @@ function getCss(theme: string, type: string) {
         height:75px;
         width:100%;
         display:flex;
+        position:relative;
         justify-content:flex-end;
+    }
+    .chain-position {
+        position:absolute;
+        left:0px;
     }
     .logo-footer .markr-logo {
         height:75px;
@@ -336,11 +341,11 @@ function renderTvl({ cardName, tvl, address, type, chainName }: IRenderWithPrice
             `
 }
 
-function renderPair({ cardName, price, address, chainId, chainName }: IRenderPair) {
+function renderPair({ cardName, price, address, chainId }: IRenderPair) {
     const addresses = address.split("||");
     return `<div class="header">
                 <div class="description-tvl tvl-text-width">
-                    <span>${cardName}, <span class="keynote"> pair available on </span>${chainName}. </span>
+                    <span>${cardName}, <span class="keynote"> available to trade on</span> Markr. </span>
                 </div>
             </div>
             <div class="main flex items-center">
@@ -349,12 +354,13 @@ function renderPair({ cardName, price, address, chainId, chainName }: IRenderPai
                     </div>
 
                     <div class="flex wrap-div">
-                            <div class="title">Price</div>
+                            <div class="title">Market Price</div>
                             <div class="value bold-font text-uppercase">${sanitizeHtml(price)}</div>
                     </div>
                 </div>
             </div>
             <div class="logo-footer">
+                ${getTokenImage("native", chainId, "markr-logo chain-position")}
                 ${getMarkrLogo()}
             </div>
             `
