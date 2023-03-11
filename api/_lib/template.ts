@@ -345,7 +345,7 @@ function renderPair({ cardName, tvl, address, chainId, chainName }: IRenderPair)
             </div>
             <div class="main flex items-center">
                     <div class="flex items-center pair-container">
-                        ${addresses.map((adr: string, index: number) => ` <div class="app-icon" style="left:-${index * 52}px; position:relative"> ${getTokenImage(adr, chainId, "logo")} </div>`)}
+                        ${addresses.map((adr: string, index: number) => ` <div class="app-icon" style="left:-${index * 52}px; position:relative;"> ${getTokenImage(adr, chainId, "logo")} </div>`)}
                     </div>
 
                     <div class="flex wrap-div">
