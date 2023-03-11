@@ -351,12 +351,12 @@ function renderPair({ cardName, price, address, chainId }: IRenderPair) {
                     <span>${cardName}, <span class="keynote"> available to trade on</span> Markr. </span>
                 </div>
             </div>
-            <div class="main flex items-center">
+            <div class="main flex items-center justify-center ">
                     <div class="flex items-center pair-container">
                        ${addresses.map((adr: string, index: number) => `<div class="app-icon" style="left:-${index * 52}px; position:relative;"> ${getTokenImage(adr, chainId, "logo")} </div>`)}
                     </div>
 
-                    <div class="flex wrap-div items-center">
+                    <div class="flex wrap-div justify-center ">
                             <div class="title">Market Price</div>
                             <div class="value bold-font text-uppercase">${sanitizeHtml(price)}</div>
                     </div>
