@@ -337,7 +337,7 @@ function renderTvl({ cardName, tvl, address, type, chainName }: IRenderWithPrice
 }
 // ${ addresses.map((adr: string, index: number) => `<div class="app-icon" style="left:-${index * 52}px; position:relative;"> ${getTokenImage(adr, chainId, "logo")} </div>`) }
 function renderPair({ cardName, tvl, address, chainId, chainName }: IRenderPair) {
-    const addresses = address.split("+");
+    const addresses = address.split("||");
     return `<div class="header">
                 <div class="description-tvl tvl-text-width">
                     <span>${cardName}, <span class="keynote"> pair available on </span>${chainName}. </span>
