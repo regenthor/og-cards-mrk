@@ -174,6 +174,9 @@ function getCss(theme: string, type: string) {
     .chain-position {
         position:absolute;
         left:0px;
+        top:19px;
+        height:37px;
+        width:37px;
     }
     .logo-footer .markr-logo {
         height:75px;
@@ -353,14 +356,14 @@ function renderPair({ cardName, price, address, chainId }: IRenderPair) {
                        ${addresses.map((adr: string, index: number) => `<div class="app-icon" style="left:-${index * 52}px; position:relative;"> ${getTokenImage(adr, chainId, "logo")} </div>`)}
                     </div>
 
-                    <div class="flex wrap-div">
+                    <div class="flex wrap-div items-center">
                             <div class="title">Market Price</div>
                             <div class="value bold-font text-uppercase">${sanitizeHtml(price)}</div>
                     </div>
                 </div>
             </div>
             <div class="logo-footer">
-                ${getTokenImage("native", chainId, "markr-logo chain-position")}
+                ${getTokenImage("native", chainId, "chain-position")}
                 ${getMarkrLogo()}
             </div>
             `
