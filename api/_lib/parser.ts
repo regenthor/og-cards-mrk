@@ -22,7 +22,7 @@ export function parseRequest(req: IncomingMessage) {
         cardName = arr.join('.');
     }
 
-    cardName = cardName.replaceAll("_", " ");
+    cardName = cardName.replace("_", " ");
 
 
     const parsedRequest: ParsedRequest = {
